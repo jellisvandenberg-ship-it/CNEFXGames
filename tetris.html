@@ -1,260 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>TETRIS - CNEFX Game Hub</title>
+<meta charset="UTF-8">
+<title>Tetris - CNEFX</title>
 
 <style>
-  body {
-    margin: 0;
-    font-family: Arial;
-    color: white;
-    background: radial-gradient(circle at top, #1a1a2e, #0b0b0b);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #1b1f3a, #0a0a0f 60%);
+  color: white;
+  font-family: Arial;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-  /* 🏠 HOME BUTTON */
-  .home-btn {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #1c1c1c;
-    padding: 10px 14px;
-    border-radius: 10px;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border: 1px solid #333;
-    transition: 0.2s;
-    z-index: 9999;
-  }
+/* 🏠 HOME BUTTON */
+.home-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  padding: 10px 14px;
+  background: rgba(30,30,30,0.9);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 999;
+}
 
-  .home-btn:hover {
-    background: #2a2a2a;
-    transform: scale(1.05);
-  }
+.home-btn:hover {
+  background: rgba(60,60,60,0.9);
+}
 
-  h1 {
-    margin-top: 60px;
-    margin-bottom: 5px;
-    letter-spacing: 2px;
-  }
+/* WRAPPER */
+.wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
 
-  .subtitle {
-    opacity: 0.7;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
+/* SIDE PANEL */
+.panel {
+  width: 160px;
+  background: rgba(0,0,0,0.4);
+  padding: 15px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
 
-  /* 🎮 GAME WRAPPER */
-  .game-container {
-    background: linear-gradient(145deg, #141414, #0f0f0f);
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    border: 1px solid #222;
-  }
+.panel h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
 
-  canvas {
-    background: #000;
-    border: 2px solid #333;
-    box-shadow: 0 0 20px rgba(0,255,136,0.1);
-  }
+.stat {
+  margin: 10px 0;
+  font-size: 14px;
+}
 
-  .info {
-    margin-top: 10px;
-    font-size: 13px;
-    opacity: 0.8;
-    text-align: center;
-  }
-
-  .hint {
-    margin-top: 5px;
-    font-size: 12px;
-    opacity: 0.5;
-  }
+/* CANVAS */
+canvas {
+  background: #111;
+  border: 2px solid rgba(255,255,255,0.1);
+}
 </style>
 </head>
 
 <body>
 
-<!-- 🏠 GLOBAL HOME -->
 <a href="index.html" class="home-btn">CNEFX</a>
 
-<h1>TETRIS</h1>
-<div class="subtitle">Stack. Clear. Survive.</div>
+<div class="wrapper">
 
-<div class="game-container">
-  <canvas id="tetris" width="240" height="400"></canvas>
+  <!-- SIDE PANEL -->
+  <div class="panel">
+    <h2>TETRIS</h2>
 
-  <div class="info">Arrow keys to move • ↑ rotate • ↓ drop</div>
-  <div class="hint">Tip: Don’t panic when it gets fast 😏</div>
+    <div class="stat">Score: <span id="score">0</span></div>
+    <div class="stat">Lines: <span id="lines">0</span></div>
+    <div class="stat">Level: <span id="level">1</span></div>
+
+    <hr style="opacity:0.2">
+
+    <div class="stat">Next:</div>
+    <canvas id="next" width="80" height="80"></canvas>
+  </div>
+
+  <!-- GAME -->
+  <canvas id="game" width="300" height="600"></canvas>
+
 </div>
 
 <script>
-const canvas = document.getElementById("tetris");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-ctx.scale(20, 20);
 
-function createMatrix(w, h) {
-  const matrix = [];
-  while (h--) matrix.push(new Array(w).fill(0));
-  return matrix;
-}
+const nextCanvas = document.getElementById("next");
+const nctx = nextCanvas.getContext("2d");
 
-function createPiece(type) {
-  if (type === "T") return [[0,0,0],[1,1,1],[0,1,0]];
-  if (type === "O") return [[2,2],[2,2]];
-  if (type === "L") return [[0,3,0],[0,3,0],[0,3,3]];
-  if (type === "J") return [[0,4,0],[0,4,0],[4,4,0]];
-  if (type === "I") return [[0,5,0,0],[0,5,0,0],[0,5,0,0],[0,5,0,0]];
-  if (type === "S") return [[0,6,6],[6,6,0],[0,0,0]];
-  if (type === "Z") return [[7,7,0],[0,7,7],[0,0,0]];
-}
+const ROWS = 20;
+const COLS = 10;
+const SIZE = 30;
 
-function drawMatrix(matrix, offset) {
-  matrix.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        ctx.fillStyle = colors[value];
-        ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
-      }
-    });
-  });
-}
+let score = 0;
+let lines = 0;
+let level = 1;
 
-function merge(arena, player) {
-  player.matrix.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        arena[y + player.pos.y][x + player.pos.x] = value;
-      }
-    });
-  });
-}
+const scoreEl = document.getElementById("score");
+const linesEl = document.getElementById("lines");
+const levelEl = document.getElementById("level");
 
-function collide(arena, player) {
-  const m = player.matrix;
-  const o = player.pos;
-  for (let y = 0; y < m.length; y++) {
-    for (let x = 0; x < m[y].length; x++) {
-      if (m[y][x] !== 0 &&
-        (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
+/* GRID */
+let board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
 
-function arenaSweep() {
-  outer: for (let y = arena.length - 1; y >= 0; y--) {
-    for (let x = 0; x < arena[y].length; x++) {
-      if (arena[y][x] === 0) continue outer;
-    }
-    arena.splice(y, 1);
-    arena.unshift(new Array(arena[0].length).fill(0));
-  }
-}
-
-function rotate(matrix) {
-  for (let y = 0; y < matrix.length; y++) {
-    for (let x = 0; x < y; x++) {
-      [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
-    }
-  }
-  matrix.forEach(row => row.reverse());
-}
-
-function playerReset() {
-  const pieces = "TJLOSZI";
-  player.matrix = createPiece(pieces[Math.floor(Math.random()*pieces.length)]);
-  player.pos.y = 0;
-  player.pos.x = Math.floor(arena[0].length / 2 - player.matrix[0].length / 2);
-
-  if (collide(arena, player)) {
-    arena.forEach(row => row.fill(0));
-  }
-}
-
-function playerDrop() {
-  player.pos.y++;
-  if (collide(arena, player)) {
-    player.pos.y--;
-    merge(arena, player);
-    arenaSweep();
-    playerReset();
-  }
-  dropCounter = 0;
-}
-
-function playerMove(dir) {
-  player.pos.x += dir;
-  if (collide(arena, player)) player.pos.x -= dir;
-}
-
-function playerRotate() {
-  rotate(player.matrix);
-  if (collide(arena, player)) {
-    rotate(player.matrix);
-    rotate(player.matrix);
-    rotate(player.matrix);
-  }
-}
-
-let arena = createMatrix(12, 20);
-
-let player = {
-  pos: {x:0,y:0},
-  matrix: null
-};
-
-const colors = [
-  null,
-  "#ff4d6d",
-  "#4dd2ff",
-  "#4dff88",
-  "#c44dff",
-  "#ff9f1c",
-  "#ffe14d",
-  "#4d79ff"
+/* PIECES */
+const PIECES = [
+  [[1,1,1,1]],
+  [[1,1],[1,1]],
+  [[0,1,0],[1,1,1]],
+  [[1,0,0],[1,1,1]],
+  [[0,0,1],[1,1,1]]
 ];
 
-let dropCounter = 0;
-let dropInterval = 500;
-let lastTime = 0;
+let piece = randomPiece();
+let nextPiece = randomPiece();
 
-function update(time = 0) {
-  const delta = time - lastTime;
-  lastTime = time;
-  dropCounter += delta;
-
-  if (dropCounter > dropInterval) playerDrop();
-
-  draw();
-  requestAnimationFrame(update);
+function randomPiece() {
+  return {
+    shape: PIECES[Math.floor(Math.random() * PIECES.length)],
+    x: 3,
+    y: 0
+  };
 }
 
-function draw() {
-  ctx.fillStyle = "#000";
+/* DRAW */
+function drawBoard() {
+  ctx.fillStyle = "#111";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  drawMatrix(arena, {x:0,y:0});
-  drawMatrix(player.matrix, player.pos);
+  for (let r=0;r<ROWS;r++){
+    for (let c=0;c<COLS;c++){
+      if (board[r][c]) {
+        ctx.fillStyle = "lime";
+        ctx.fillRect(c*SIZE,r*SIZE,SIZE,SIZE);
+      }
+    }
+  }
 }
 
-document.addEventListener("keydown", e => {
-  if (e.key === "ArrowLeft") playerMove(-1);
-  else if (e.key === "ArrowRight") playerMove(1);
-  else if (e.key === "ArrowDown") playerDrop();
-  else if (e.key === "ArrowUp") playerRotate();
+function drawPiece(p, context, offsetX=0, offsetY=0, size=SIZE) {
+  context.fillStyle = "cyan";
+  p.shape.forEach((row,y)=>{
+    row.forEach((val,x)=>{
+      if (val){
+        context.fillRect(
+          (p.x + x + offsetX)*size,
+          (p.y + y + offsetY)*size,
+          size,size
+        );
+      }
+    });
+  });
+}
+
+/* NEXT PREVIEW */
+function drawNext() {
+  nctx.fillStyle = "#111";
+  nctx.fillRect(0,0,80,80);
+
+  nctx.fillStyle = "cyan";
+  nextPiece.shape.forEach((row,y)=>{
+    row.forEach((val,x)=>{
+      if (val){
+        nctx.fillRect(x*20+10,y*20+10,20,20);
+      }
+    });
+  });
+}
+
+/* COLLISION */
+function collide(p){
+  return p.shape.some((row,y)=>{
+    return row.some((val,x)=>{
+      if (!val) return false;
+      let newY = p.y + y;
+      let newX = p.x + x;
+      return (
+        newY >= ROWS ||
+        newX < 0 ||
+        newX >= COLS ||
+        board[newY]?.[newX]
+      );
+    });
+  });
+}
+
+/* MERGE */
+function merge(){
+  piece.shape.forEach((row,y)=>{
+    row.forEach((val,x)=>{
+      if (val){
+        board[piece.y+y][piece.x+x] = 1;
+      }
+    });
+  });
+}
+
+/* CLEAR LINES */
+function clearLines(){
+  let cleared = 0;
+
+  board = board.filter(row=>{
+    if (row.every(v=>v)){
+      cleared++;
+      return false;
+    }
+    return true;
+  });
+
+  while(board.length<ROWS){
+    board.unshift(Array(COLS).fill(0));
+  }
+
+  if (cleared){
+    lines += cleared;
+    score += cleared*100;
+    level = Math.floor(lines/5)+1;
+
+    scoreEl.innerText = score;
+    linesEl.innerText = lines;
+    levelEl.innerText = level;
+  }
+}
+
+/* DROP */
+function drop(){
+  piece.y++;
+  if (collide(piece)){
+    piece.y--;
+    merge();
+    clearLines();
+
+    piece = nextPiece;
+    nextPiece = randomPiece();
+
+    if (collide(piece)){
+      alert("Game Over!");
+      board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+      score = 0; lines = 0; level = 1;
+    }
+  }
+}
+
+/* CONTROLS */
+document.addEventListener("keydown", e=>{
+  if (e.key==="ArrowLeft") piece.x--;
+  if (e.key==="ArrowRight") piece.x++;
+  if (e.key==="ArrowDown") drop();
+
+  if (collide(piece)) {
+    if (e.key==="ArrowLeft") piece.x++;
+    if (e.key==="ArrowRight") piece.x--;
+  }
 });
 
-playerReset();
+/* LOOP */
+function update(){
+  drawBoard();
+  drawPiece(piece,ctx);
+
+  drawNext();
+
+  requestAnimationFrame(update);
+}
 update();
+
+setInterval(drop, 600);
 </script>
 
 </body>
