@@ -20,8 +20,8 @@ const games = [
     desc: "Futuristic racing"
   },
   {
-    name: "STICKMAN SWING",
-    file: "stickman-swing.html",
-    desc: "Swing through obstacles!"
+    name: "STICKMAN WORLD",
+    file: "stickman-world.html",
+    desc: "Stickman battle arena!"
   }
 ];
