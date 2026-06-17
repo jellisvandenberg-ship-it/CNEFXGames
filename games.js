@@ -18,5 +18,10 @@ const games = [
     name: "HEXGL",
     file: "hexgl.html",
     desc: "Futuristic racing"
+  },
+  {
+    name: "STICKMAN HOOK",
+    file: "stickman.html",
+    desc: "Swing and survive!"
   }
 ];
