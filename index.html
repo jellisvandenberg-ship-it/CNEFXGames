@@ -13,23 +13,24 @@
     overflow-x: hidden;
   }
 
-  /* subtle grid background overlay */
+  /* subtle grid background */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
     background-size: 50px 50px;
+    opacity: 0.35;
     pointer-events: none;
-    opacity: 0.4;
   }
 
-  /* 🏠 TOP LEFT BUTTON */
+  /* 🏠 HOME BUTTON */
   .home-btn {
     position: fixed;
-    top: 16px;
-    left: 16px;
+    top: 15px;
+    left: 15px;
     padding: 10px 14px;
     background: rgba(30,30,30,0.9);
     border: 1px solid rgba(255,255,255,0.1);
@@ -39,7 +40,7 @@
     font-weight: bold;
     backdrop-filter: blur(8px);
     transition: 0.2s;
-    z-index: 999;
+    z-index: 9999;
   }
 
   .home-btn:hover {
@@ -47,27 +48,43 @@
     background: rgba(50,50,50,0.9);
   }
 
-  /* HEADER */
   header {
     text-align: center;
-    padding: 80px 20px 30px;
+    padding: 80px 20px 25px;
   }
 
   header h1 {
-    font-size: 40px;
     margin: 0;
+    font-size: 42px;
     letter-spacing: 2px;
   }
 
   .status {
     margin-top: 10px;
     font-size: 14px;
-    opacity: 0.7;
+    opacity: 0.75;
   }
 
   .online {
     color: #00ff88;
     font-weight: bold;
+  }
+
+  /* STATUS BUTTON */
+  .status-btn {
+    margin-top: 12px;
+    padding: 7px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #00ff88;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .status-btn:hover {
+    background: #00cc6a;
   }
 
   /* GRID */
@@ -82,7 +99,7 @@
 
   /* CARD */
   .card {
-    background: rgba(25,25,25,0.8);
+    background: rgba(25,25,25,0.85);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
     padding: 18px;
@@ -116,7 +133,6 @@
     color: black;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
   }
 
   button:hover {
@@ -124,8 +140,8 @@
   }
 
   a {
-    color: inherit;
     text-decoration: none;
+    color: inherit;
   }
 
   footer {
@@ -145,23 +161,27 @@
 <!-- HEADER -->
 <header>
   <h1>CNEFX Game Hub</h1>
-  <div class="status">Status: <span class="online">Online</span></div>
-  <div style="opacity:0.6;font-size:12px;margin-top:6px;">
-    A lightweight arcade launcher
+
+  <div class="status">
+    Status: <span class="online">Online</span>
   </div>
+
+  <a href="status.html">
+    <button class="status-btn">Check server status</button>
+  </a>
 </header>
 
-<!-- GRID -->
+<!-- GAME GRID -->
 <div class="grid" id="gameGrid"></div>
 
 <footer>
   built by CNEFX 🚀
 </footer>
 
-<!-- GAME DATA -->
+<!-- LOAD GAME DATA -->
 <script src="games.js"></script>
 
-<!-- AUTO BUILD -->
+<!-- AUTO BUILD GAMES -->
 <script>
 const grid = document.getElementById("gameGrid");
 
