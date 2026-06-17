@@ -31,7 +31,7 @@ const games = [
   },
   {
     name: "GEOMETRY DASH",
-    file: "geometrydash.html",
+    file: "gd-game.html",
     desc: "Rhythm platformer challenge!"
   }
 ];
