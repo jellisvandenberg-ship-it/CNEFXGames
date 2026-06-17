@@ -30,8 +30,8 @@ const games = [
     desc: "Conquer territory online!"
   },
   {
-    name: "GEOMETRY DASH",
-    file: "gd-game.html",
-    desc: "Rhythm platformer challenge!"
+    name: "MOTO X3M",
+    file: "moto-x3m.html",
+    desc: "Bike stunt racing madness!"
   }
 ];
