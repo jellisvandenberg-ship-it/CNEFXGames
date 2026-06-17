@@ -1,25 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Profile</title>
+<meta charset="UTF-8">
+<title>My Account</title>
+
+<style>
+  body {
+    font-family: Arial;
+    margin: 0;
+    background: linear-gradient(135deg, #dff6ff, #ffffff);
+    text-align: center;
+    padding: 50px;
+  }
+
+  .card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    display: inline-block;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    min-width: 300px;
+  }
+
+  img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+
+  button {
+    margin-top: 15px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #ff4d4d;
+    color: white;
+    font-weight: bold;
+  }
+</style>
 </head>
+
 <body>
 
 <h1>My Account</h1>
 
-<p id="userInfo"></p>
+<div class="card" id="profileCard">
+  Loading...
+</div>
 
 <script>
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    document.getElementById("userInfo").innerHTML = `
-      <b>Email:</b> ${user.email}<br>
-      <b>Name:</b> ${user.displayName || "No name set"}
-    `;
-  } else {
-    window.location.href = "index.html";
-  }
-});
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+  window.location.href = "login.html";
+} else {
+  document.getElementById("profileCard").innerHTML = `
+    <img src="${user.photo}">
+    <h2>${user.name}</h2>
+    <p>${user.email || "No email stored"}</p>
+
+    <button onclick="logout()">Logout</button>
+  `;
+}
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+}
 </script>
 
 </body>
