@@ -25,6 +25,7 @@
     pointer-events: none;
   }
 
+  /* TOP BUTTONS */
   .home-btn, .discord-btn {
     position: fixed;
     top: 15px;
@@ -38,38 +39,18 @@
     cursor: pointer;
   }
 
-  .home-btn {
-    left: 15px;
-    background: white;
-    color: #111;
-  }
-
-  .discord-btn {
-    right: 15px;
-    background: #5865F2;
-    color: white;
-  }
+  .home-btn { left: 15px; background: white; color: #111; }
+  .discord-btn { right: 15px; background: #5865F2; color: white; }
 
   header {
     text-align: center;
     padding: 80px 20px 10px;
   }
 
-  header h1 {
-    margin: 0;
-    font-size: 46px;
-  }
+  header h1 { margin: 0; font-size: 46px; }
 
-  .status {
-    margin-top: 10px;
-    font-size: 14px;
-    opacity: 0.8;
-  }
-
-  .online {
-    color: #00aa55;
-    font-weight: bold;
-  }
+  .status { margin-top: 10px; font-size: 14px; opacity: 0.8; }
+  .online { color: #00aa55; font-weight: bold; }
 
   .status-btn {
     margin-top: 10px;
@@ -182,7 +163,7 @@
     display: none;
     flex-direction: column;
     overflow: hidden;
-    min-width: 170px;
+    min-width: 180px;
     z-index: 9999;
   }
 
@@ -205,7 +186,7 @@
 <a href="index.html" class="home-btn">CNEFX</a>
 <a href="https://discord.gg/fQTDBBckPW" class="discord-btn" target="_blank">Discord</a>
 
-<!-- 👤 avatar -->
+<!-- avatar -->
 <div id="accountBtn" class="account-btn">
   <img id="accountPfp">
 </div>
@@ -213,8 +194,8 @@
 <!-- dropdown -->
 <div id="dropdown" class="dropdown">
   <button onclick="location.href='profile.html'">👤 My Profile</button>
-  <button onclick="location.href='profile.html?tab=favorites'">⭐ Favorites</button>
-  <button onclick="location.href='profile.html?tab=recent'">🕒 Recently Played</button>
+  <button onclick="location.href='profile.html#favorites'">⭐ Favorites</button>
+  <button onclick="location.href='profile.html#recent'">🕒 Recently Played</button>
   <button onclick="logout()">🚪 Logout</button>
 </div>
 
@@ -236,7 +217,7 @@
 
 <div class="featured">
   <div>
-    <h2 id="featuredTitle">Featured Game</h2>
+    <h2 id="featuredTitle"></h2>
     <p id="featuredDesc"></p>
   </div>
   <button id="featuredBtn">Play Now</button>
@@ -251,12 +232,19 @@
 <script>
 const games = window.games || [];
 
-/* USER */
+/* =========================
+   👤 USER (PER ACCOUNT FIX)
+========================= */
 const user = JSON.parse(localStorage.getItem("user") || "null");
 
 const accBtn = document.getElementById("accountBtn");
 const pfp = document.getElementById("accountPfp");
 const dropdown = document.getElementById("dropdown");
+
+function getUserKey(key) {
+  if (!user?.email && !user?.name) return key;
+  return `${key}_${user.email || user.name}`;
+}
 
 if (user) {
   accBtn.style.display = "block";
@@ -279,7 +267,9 @@ window.addEventListener("click", (e) => {
   }
 });
 
-/* GRID */
+/* =========================
+   🎮 GRID
+========================= */
 const grid = document.getElementById("gameGrid");
 const searchInput = document.getElementById("searchInput");
 
@@ -312,7 +302,9 @@ searchInput.addEventListener("input", e => {
   );
 });
 
-/* FEATURED */
+/* =========================
+   🔥 FEATURED
+========================= */
 const week = Math.floor(Date.now() / 604800000);
 const featured = games[week % games.length];
 
