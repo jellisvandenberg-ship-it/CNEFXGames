@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smash Karts</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f0f0f;
+    color: white;
+  }
+
+  header {
+    padding: 12px 16px;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  header h1 {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .btn {
+    background: #ffcc00;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 6px;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 50px);
+  }
+
+  iframe {
+    width: 95%;
+    height: 90%;
+    border: none;
+    border-radius: 12px;
+  }
+
+  .fallback {
+    text-align: center;
+    display: none;
+  }
+
+  a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Smash Karts</h1>
+
+  <div>
+    <button class="btn" onclick="openFull()">Fullscreen</button>
+    <button class="btn" onclick="openTab()">Open in Tab</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <iframe 
+    id="gameFrame"
+    src="https://smash-karts.gitlab.io/"
+  ></iframe>
+
+  <div class="fallback" id="fallback">
+    <h2>Game blocked in iframe 😢</h2>
+    <p>
+      Click below to play:
+      <br><br>
+      <a href="https://smash-karts.gitlab.io/" target="_blank">
+        ▶ Open Smash Karts
+      </a>
+    </p>
+  </div>
+
+</div>
+
+<script>
+function openFull() {
+  const iframe = document.getElementById("gameFrame");
+  if (iframe.requestFullscreen) {
+    iframe.requestFullscreen();
+  }
+}
+
+function openTab() {
+  window.open("https://smash-karts.gitlab.io/", "_blank");
+}
+
+// simple iframe fail detection
+setTimeout(() => {
+  const iframe = document.getElementById("gameFrame");
+  try {
+    if (!iframe.contentWindow) throw new Error("blocked");
+  } catch (e) {
+    document.getElementById("gameFrame").style.display = "none";
+    document.getElementById("fallback").style.display = "block";
+  }
+}, 3000);
+</script>
+
+</body>
+</html>
