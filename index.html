@@ -224,9 +224,9 @@
 <a href="index.html" class="home-btn">CNEFX</a>
 <a href="https://discord.gg/fQTDBBckPW" class="discord-btn" target="_blank">Discord</a>
 
-<!-- 👤 avatar button -->
+<!-- 👤 avatar -->
 <div id="accountBtn" class="account-btn">
-  <img id="accountPfp" src="">
+  <img id="accountPfp">
 </div>
 
 <!-- dropdown -->
@@ -281,17 +281,19 @@ const dropdown = document.getElementById("dropdown");
 if (user) {
   userBox.innerHTML = `
     <img src="${user.photo || 'https://via.placeholder.com/35'}">
-    <span>Welcome, ${user.name}</span>
+    <span>Welcome, ${user.name || "Player"}</span>
   `;
 
   accBtn.style.display = "block";
   pfp.src = user.photo || "https://via.placeholder.com/40";
-
-  accBtn.onclick = () => {
-    dropdown.style.display =
-      dropdown.style.display === "flex" ? "none" : "flex";
-  };
 }
+
+/* dropdown toggle */
+accBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  dropdown.style.display =
+    dropdown.style.display === "flex" ? "none" : "flex";
+});
 
 /* logout */
 function logout() {
@@ -299,11 +301,9 @@ function logout() {
   location.href = "login.html";
 }
 
-/* close dropdown when clicking outside */
-window.addEventListener("click", (e) => {
-  if (!accBtn.contains(e.target)) {
-    dropdown.style.display = "none";
-  }
+/* close dropdown */
+document.addEventListener("click", () => {
+  dropdown.style.display = "none";
 });
 
 /* GRID */
@@ -328,7 +328,6 @@ function render(list) {
 
 render([...games].sort(() => Math.random() - 0.5));
 
-/* SEARCH */
 searchInput.addEventListener("input", e => {
   const v = e.target.value.toLowerCase();
 
