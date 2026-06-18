@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Smash Karts</title>
+<title>Drive Mad</title>
 
 <style>
   body {
@@ -21,8 +21,8 @@
   }
 
   header h1 {
-    font-size: 18px;
     margin: 0;
+    font-size: 18px;
   }
 
   .btn {
@@ -32,13 +32,14 @@
     cursor: pointer;
     font-weight: bold;
     border-radius: 6px;
+    margin-left: 6px;
   }
 
   .container {
+    height: calc(100vh - 50px);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 50px);
   }
 
   iframe {
@@ -48,15 +49,15 @@
     border-radius: 12px;
   }
 
-  .fallback {
-    text-align: center;
+  #fallback {
     display: none;
+    text-align: center;
   }
 
   a {
     color: #ffcc00;
-    text-decoration: none;
     font-weight: bold;
+    text-decoration: none;
   }
 </style>
 </head>
@@ -64,28 +65,30 @@
 <body>
 
 <header>
-  <h1>Smash Karts</h1>
+  <h1>Drive Mad</h1>
 
   <div>
-    <button class="btn" onclick="openFull()">Fullscreen</button>
+    <button class="btn" onclick="fullscreen()">Fullscreen</button>
     <button class="btn" onclick="openTab()">Open in Tab</button>
   </div>
 </header>
 
 <div class="container">
 
+  <!-- Try embed version first -->
   <iframe 
     id="gameFrame"
-    src="https://www.crazygames.com/game/smash-karts"
+    src="https://game.gys.cn/embed/drive-mad"
   ></iframe>
 
-  <div class="fallback" id="fallback">
-    <h2>Game blocked in iframe 😢</h2>
+  <!-- fallback if iframe fails -->
+  <div id="fallback">
+    <h2>Game can’t load here 😢</h2>
     <p>
       Click below to play:
       <br><br>
-      <a href="https://www.crazygames.com/game/smash-karts" target="_blank">
-        ▶ Open Smash Karts
+      <a href="https://www.drivemad.com/" target="_blank">
+        ▶ Play Drive Mad
       </a>
     </p>
   </div>
@@ -93,7 +96,7 @@
 </div>
 
 <script>
-function openFull() {
+function fullscreen() {
   const iframe = document.getElementById("gameFrame");
   if (iframe.requestFullscreen) {
     iframe.requestFullscreen();
@@ -101,19 +104,26 @@ function openFull() {
 }
 
 function openTab() {
-  window.open("https://www.crazygames.com/game/smash-karts", "_blank");
+  window.open("https://www.drivemad.com/", "_blank");
 }
 
-// simple iframe fail detection
+// fallback detection (best effort)
 setTimeout(() => {
   const iframe = document.getElementById("gameFrame");
+
   try {
     if (!iframe.contentWindow) throw new Error("blocked");
+
+    setTimeout(() => {
+      document.getElementById("fallback").style.display = "block";
+      iframe.style.display = "none";
+    }, 2500);
+
   } catch (e) {
-    document.getElementById("gameFrame").style.display = "none";
     document.getElementById("fallback").style.display = "block";
+    iframe.style.display = "none";
   }
-}, 3000);
+}, 4000);
 </script>
 
 </body>
