@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Drive Mad</title>
+<title>Final War</title>
 
 <style>
   body {
@@ -56,8 +56,8 @@
 
   a {
     color: #ffcc00;
-    font-weight: bold;
     text-decoration: none;
+    font-weight: bold;
   }
 </style>
 </head>
@@ -65,7 +65,7 @@
 <body>
 
 <header>
-  <h1>Drive Mad</h1>
+  <h1>Final War</h1>
 
   <div>
     <button class="btn" onclick="fullscreen()">Fullscreen</button>
@@ -75,20 +75,20 @@
 
 <div class="container">
 
-  <!-- Try embed version first -->
+  <!-- iframe game -->
   <iframe 
     id="gameFrame"
-    src="https://game.gys.cn/embed/drive-mad"
-  ></iframe>
+    src="https://zv1y2i8p.play.gamezop.com/g/gTD1yQp3R">
+  </iframe>
 
-  <!-- fallback if iframe fails -->
+  <!-- fallback -->
   <div id="fallback">
-    <h2>Game can’t load here 😢</h2>
+    <h2>Game couldn’t load 😢</h2>
     <p>
       Click below to play:
       <br><br>
-      <a href="https://www.drivemad.com/" target="_blank">
-        ▶ Play Drive Mad
+      <a href="https://zv1y2i8p.play.gamezop.com/g/gTD1yQp3R" target="_blank">
+        ▶ Play Final War
       </a>
     </p>
   </div>
@@ -104,10 +104,10 @@ function fullscreen() {
 }
 
 function openTab() {
-  window.open("https://www.drivemad.com/", "_blank");
+  window.open("https://zv1y2i8p.play.gamezop.com/g/gTD1yQp3R", "_blank");
 }
 
-// fallback detection (best effort)
+// simple fallback detection
 setTimeout(() => {
   const iframe = document.getElementById("gameFrame");
 
