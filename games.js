@@ -35,8 +35,8 @@ window.games = [
     desc: "Bike stunt racing madness!"
   },
   {
-    name: "DRIVE MAD",
-    file: "drivemad.html",
-    desc: "Official Drive Mad game!"
+    name: "FINAL WAR DEADZONE",
+    file: "finalwar.html",
+    desc: "Fight in the warzone!"
   }
 ];
